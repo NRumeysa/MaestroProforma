@@ -253,18 +253,40 @@ public class ProformaStepDef {
             expectedErrorMessage, proformaPage.hataMesaji.getText());
     }
 
+//-----------------------------------------tc04-------------------------------------
 
+    @And("tarih alanina {string} girer")
+    public void tarihAlaninaGirer(String tarih) {
+        Driver.getDriver().navigate().refresh();
+        WaitUtils.waitFor(2);
+        PageFactory.initElements(Driver.getDriver(), proformaPage);
 
+        WaitUtils.waitForClickablility(proformaPage.dateBox, 10);
+        proformaPage.dateBox.click();
+        proformaPage.dateBox.clear();
+        
+        // JavaScript ile değeri set et
+        JavascriptExecutor js = (JavascriptExecutor) Driver.getDriver();
+        js.executeScript("arguments[0].value = arguments[1]", proformaPage.dateBox, tarih);
+        
+        // Normal yolla da gönder
+        proformaPage.dateBox.sendKeys(tarih);
+        proformaPage.dateBox.sendKeys(Keys.ENTER);
+        
+        // Focus'u değiştir
+        proformaPage.musteriText.click();
+        
+        // Kontrol et
+        WaitUtils.waitFor(1);
+        String currentValue = proformaPage.dateBox.getAttribute("value");
+        System.out.println("Girilen değer: " + currentValue); // Debug için
+    }
 
-
-
-
-
-
-
-
-
-
-
-
+    @Then("sistem hata mesajı göstermelidir")
+    public void ssistemHataMesajiGostermelidir() {
+        String expectedErrorMessage = "AddProduct(): The string was not recognized as a valid DateTime. There is an unknown word starting at index 0.";
+        WaitUtils.waitForVisibility(proformaPage.hataMesaji, 10);
+        Assert.assertEquals("Hata mesajı beklendiği gibi değil",
+            expectedErrorMessage, proformaPage.hataMesaji.getText());
+    }
 }

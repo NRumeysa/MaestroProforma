@@ -33,3 +33,10 @@ Feature: Proforma Oluşturma ve Doğrulama
     And kalemler alanindan "VH3 KANSAYIM CİHAZI" secer
     When kaydet butonuna tiklanir
     Then Sistem Hata mesajı göstermelidir
+
+    @TC04
+    Scenario: Geçersiz tarih formatı kontrolü
+      When yeni butonuna tiklar
+      And tarih alanina "a" girer
+      And Kalemler alanindan veri secilmeye calisildiginda
+      Then sistem hata mesajı göstermelidir
