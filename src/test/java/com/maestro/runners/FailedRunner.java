@@ -17,7 +17,7 @@ import org.junit.runner.RunWith;
         features = "@TestOutput/failed_scenario.txt",
         glue = {"com/maestro/stepDefinitions", "com/maestro/hooks"},
         dryRun = false
-        //true iken sadece kontrol yapar, testlerinizi gerçekten çalıştırmaz.
+
 
 )
 

@@ -4,7 +4,7 @@ import io.cucumber.junit.Cucumber;
 import io.cucumber.junit.CucumberOptions;
 import org.junit.runner.RunWith;
 
-@RunWith(Cucumber.class)  //Cucumber, çalıştır, RUN ET!
+@RunWith(Cucumber.class)
 @CucumberOptions(
         plugin = {
                 "pretty",
@@ -16,7 +16,7 @@ import org.junit.runner.RunWith;
         glue = {"com/maestro/stepDefinitions", "com/maestro/hooks"},
         tags = "@US011",
         dryRun = false
-        //true iken sadece kontrol yapar, testlerinizi gerçekten çalıştırmaz.
+
 
 )
 

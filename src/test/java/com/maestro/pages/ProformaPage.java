@@ -23,13 +23,20 @@ public class ProformaPage {
     @FindBy(id = "select2-ddAccount-container")
     public WebElement accountDropdown;
 
+    @FindBy(xpath = "(//label[contains(text(), 'Müşteri')])[1]")
+    public WebElement musteriText;
+
+    @FindBy(xpath = "(//input[@class='select2-search__field'])[3]")
+    public WebElement musteriSecimiBox;
+
+
     @FindBy(id = "select2-ddAccountPerson-container")
     public WebElement yetkiliDropdown;
 
     @FindBy(id = "select2-ddInvoiceAddress-container")
     public WebElement faturaAddresDropdown;
 
-    @FindBy(id = "select2-ddDeliveryAddress-container")
+    @FindBy(id = "ddDeliveryAddress")
     public WebElement teslimatAddresDropdown;
 
     @FindBy(id = "select2-ddCurrency-container")
@@ -59,8 +66,17 @@ public class ProformaPage {
     @FindBy(id = "spnImportFileName")
     public WebElement iceAktarButton;
 
+    @FindBy(id = "select2-ddProduct-container")
+    public WebElement kalemlerDropdown;
 
+    @FindBy(xpath = "//input[@class='select2-search__field']")
+    public WebElement kalemlerSearchBox;
 
+    @FindBy(xpath = "//span[@class='panel-title']//a[contains(text(),'Kalemler')]")
+    public WebElement kalemlerLink;
+
+    @FindBy(xpath = "//a[contains(@onclick,'AddProduct')]")
+    public WebElement urunEkleButon;
 
     //---------------------------Yazdırma Parametreleri-----------------------------------------
 
@@ -171,7 +187,11 @@ public class ProformaPage {
     @FindBy(id = "txtDealerRateInfo")
     public WebElement oranBox;
 
+    @FindBy(xpath = "//button[@type='button' and @class='btn btn-default' and text()='Kapat']")
+    public WebElement kapatButon;
 
+    @FindBy(xpath = "//a[@onclick='Save(false)' and contains(@class,'btn-dark') and text()='Kaydet']")
+    public WebElement kaydetButon;
 
 //      Kaydet   |    Kaydet/Yazdır    |    Listeye Dön   alanı
 
@@ -184,13 +204,10 @@ public class ProformaPage {
     @FindBy(xpath = "//a[contains(text(),'Listeye Dön')]")
     public WebElement listeyeDonButton;
 
+    @FindBy(xpath = "//div[contains(@class, 'alert-success')]//h4[@class='ui-pnotify-title']")
+    public WebElement basariliKayitBaslik;
 
-
-
-
-
-
-
-
+    @FindBy(xpath = "//div[contains(@class, 'alert-success')]//div[@class='ui-pnotify-text']")
+    public WebElement basariliKayitMesaji;
 
 }

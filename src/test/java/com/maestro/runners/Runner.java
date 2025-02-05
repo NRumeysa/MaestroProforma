@@ -17,8 +17,6 @@ import org.junit.runner.RunWith;
         glue = {"com/maestro/stepDefinitions", "com/maestro/hooks"},
         tags = "@proforma",
         dryRun = false
-        //true iken sadece kontrol yapar, testlerinizi gerçekten çalıştırmaz.
-
 )
 
 public class Runner {
