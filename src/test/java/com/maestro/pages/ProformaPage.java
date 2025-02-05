@@ -23,6 +23,12 @@ public class ProformaPage {
     @FindBy(id = "select2-ddAccount-container")
     public WebElement accountDropdown;
 
+    @FindBy(css = "#select2-ddAccount-container")
+    public WebElement selectedCustomerText;
+
+    @FindBy(css = "#select2-ddAccount-container .select2-selection__placeholder")
+    public WebElement customerPlaceholder;
+
     @FindBy(xpath = "(//label[contains(text(), 'Müşteri')])[1]")
     public WebElement musteriText;
 
@@ -77,6 +83,19 @@ public class ProformaPage {
 
     @FindBy(xpath = "//a[contains(@onclick,'AddProduct')]")
     public WebElement urunEkleButon;
+
+    @FindBy(id = "spnAccountPopup")
+    public WebElement yeniMusteriEkleButon;
+
+    @FindBy(xpath = "(//input[@name='Name'])[2]")
+    public WebElement tabelaAdiBox;
+
+    @FindBy(xpath = "//button[contains(text(), 'Kaydet')]")
+    public WebElement yeniMusteriKaydetButon;
+
+    @FindBy(xpath = "(//label[contains(text(), 'Adı')])[4]")
+    public WebElement yeniMusteriAdiText;
+
 
     //---------------------------Yazdırma Parametreleri-----------------------------------------
 

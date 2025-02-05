@@ -14,6 +14,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -218,9 +219,24 @@ public class ProformaStepDef {
         WaitUtils.waitForClickablility(proformaPage.kalemlerLink, 10);
         proformaPage.kalemlerLink.click();
 
-        WaitUtils.waitForClickablility(proformaPage.urunEkleButon, 10);
+        Driver.getDriver().navigate().refresh();
+        WaitUtils.waitFor(2);
+        // Refresh sonrası elementleri yeniden initialize et
+        PageFactory.initElements(Driver.getDriver(), proformaPage);
+
+        JSUtils.JSscrollIntoView(proformaPage.kalemlerLink);
+        WaitUtils.waitForClickablility(proformaPage.kalemlerLink, 10);
+        proformaPage.kalemlerLink.click();
+
+        WaitUtils.waitForPageToLoad(10);
+        WaitUtils.waitForClickablility(proformaPage.urunEkleButon, 15);
+
         JavascriptExecutor js = (JavascriptExecutor) Driver.getDriver();
         js.executeScript("arguments[0].click();", proformaPage.urunEkleButon);
+
+        WaitUtils.waitForVisibility(proformaPage.kapatButon, 10);
+        WaitUtils.waitForClickablility(proformaPage.kapatButon, 10);
+        proformaPage.kapatButon.click();
     }
 
     @Then("Sistem hata mesajı göstermelidir")
@@ -288,5 +304,52 @@ public class ProformaStepDef {
         WaitUtils.waitForVisibility(proformaPage.hataMesaji, 10);
         Assert.assertEquals("Hata mesajı beklendiği gibi değil",
             expectedErrorMessage, proformaPage.hataMesaji.getText());
+    }
+
+    //-----------------------------------------tc05-------------------------------------
+
+    @And("musteri alaninda + butonuna tıklanir")
+    public void musteriAlanindaButonunaTiklanir() {
+        WaitUtils.waitForClickablility(proformaPage.accountDropdown, 10);
+        proformaPage.accountDropdown.click();
+        WaitUtils.waitFor(2);
+
+        WaitUtils.waitForClickablility(proformaPage.yeniMusteriEkleButon, 10);
+        proformaPage.yeniMusteriEkleButon.click();
+    }
+
+    @And("Tabela adi alanina {string} girer")
+    public void tabelaAdiAlaninaGirer(String arg0) {
+        WaitUtils.waitForVisibility(proformaPage.tabelaAdiBox, 5).click();
+        proformaPage.tabelaAdiBox.sendKeys(arg0);
+        proformaPage.yeniMusteriAdiText.click();
+
+    }
+
+    @And("Kaydet butonuna tiklanir")
+    public void kkaydetButonunaTiklanir() {
+        proformaPage.yeniMusteriKaydetButon.click();
+        WaitUtils.waitForPageToLoad(5);
+    }
+
+    @Then("Musteri alaninda {string} secilmis oldugu dogrulanir")
+    public void musteriAlanindaSecilmisOlduguDogrulanir(String expectedTabela) {
+        // Önce sayfanın yüklenmesini bekleyelim
+        WaitUtils.waitForPageToLoad(10);
+        
+        // Placeholder olmayan elementi bekleyelim (yani müşteri seçilmiş durumu)
+        WebDriverWait wait = new WebDriverWait(Driver.getDriver(), Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.invisibilityOfElementWithText(
+            By.cssSelector("#select2-ddAccount-container .select2-selection__placeholder"),
+            "Müşteri Seçiniz"
+        ));
+        
+        // Seçilen müşteri adını alalım
+        String actualMusteriAdi = ((JavascriptExecutor) Driver.getDriver())
+                .executeScript("return document.querySelector('#select2-ddAccount-container').innerText")
+                .toString().trim();
+                
+        System.out.println("Seçilen müşteri: " + actualMusteriAdi);
+        Assert.assertEquals("Müşteri adı beklendiği gibi görüntülenmiyor", expectedTabela, actualMusteriAdi);
     }
 }

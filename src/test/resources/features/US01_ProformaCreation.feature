@@ -40,3 +40,12 @@ Feature: Proforma Oluşturma ve Doğrulama
       And tarih alanina "a" girer
       And Kalemler alanindan veri secilmeye calisildiginda
       Then sistem hata mesajı göstermelidir
+
+      @TC05
+      Scenario: Yeni müşteri (Cari) ekleme
+        When yeni butonuna tiklar
+        And tarih bilgisinin otomatik olarak geldigini dogrular
+        And musteri alaninda + butonuna tıklanir
+        And Tabela adi alanina "NRK" girer
+        And Kaydet butonuna tiklanir
+        Then Musteri alaninda "NRK" secilmis oldugu dogrulanir
