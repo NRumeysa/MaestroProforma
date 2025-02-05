@@ -15,7 +15,7 @@ import org.junit.runner.RunWith;
         },
         features = "src/test/resources/features",
         glue = {"com/maestro/stepDefinitions", "com/maestro/hooks"},
-        tags = "@TC02",
+        tags = "@TC03",
         dryRun = false
 )
 

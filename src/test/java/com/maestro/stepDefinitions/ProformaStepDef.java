@@ -13,6 +13,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -77,11 +78,11 @@ public class ProformaStepDef {
 
     @And("musteri alanindan secer")
     public void musteriAlanindanSecer() {
-
         WaitUtils.waitForClickablility(proformaPage.accountDropdown, 10);
         proformaPage.accountDropdown.click();
         Driver.getDriver().navigate().refresh();
         WaitUtils.waitFor(2);
+
         WaitUtils.waitForClickablility(proformaPage.accountDropdown, 10);
         proformaPage.accountDropdown.click();
         WaitUtils.waitForClickablility(proformaPage.musteriSecimiBox, 10);
@@ -144,12 +145,21 @@ public class ProformaStepDef {
 
     @And("kalemler alanindan {string} secer")
     public void kalemlerAlanindanSecer(String kalem) {
+        JSUtils.JSscrollIntoView(proformaPage.kalemlerLink);
+        WaitUtils.waitForClickablility(proformaPage.kalemlerLink, 10);
+        proformaPage.kalemlerLink.click();
+
+        Driver.getDriver().navigate().refresh();
+        WaitUtils.waitFor(2);
+        // Refresh sonrası elementleri yeniden initialize et
+        PageFactory.initElements(Driver.getDriver(), proformaPage);
 
         JSUtils.JSscrollIntoView(proformaPage.kalemlerLink);
         WaitUtils.waitForClickablility(proformaPage.kalemlerLink, 10);
         proformaPage.kalemlerLink.click();
 
-        WaitUtils.waitForClickablility(proformaPage.urunEkleButon, 10);
+        WaitUtils.waitForPageToLoad(10);
+        WaitUtils.waitForClickablility(proformaPage.urunEkleButon, 15);
 
         JavascriptExecutor js = (JavascriptExecutor) Driver.getDriver();
         js.executeScript("arguments[0].click();", proformaPage.urunEkleButon);
@@ -184,9 +194,10 @@ public class ProformaStepDef {
                 expectedMessage, proformaPage.basariliKayitMesaji.getText());
     }
 
-    //-----------------------------------------tc01---------------------------------------------
 
 
+
+    //-----------------------------------------tc02---------------------------------------------
 
     @Given("Kullanıcı hesaba giriş yapmış olmalıdır")
     public void kullaniciHesabaGirisYapmisOlmalidir() {
@@ -219,4 +230,41 @@ public class ProformaStepDef {
         Assert.assertEquals("Hata mesajı beklendiği gibi değil", 
             expectedErrorMessage, proformaPage.hataMesaji.getText());
     }
+
+
+
+
+    //-----------------------------------------tc03---------------------------------------------
+
+    @And("musteri alani bos birakilir")
+    public void musteriAlaniBosBirakilir() {
+        Driver.getDriver().navigate().refresh();
+        WaitUtils.waitFor(2);
+
+        PageFactory.initElements(Driver.getDriver(), proformaPage);
+        proformaPage.musteriText.click(); // tarih focusundan kurtulmak için
+    }
+
+    @Then("Sistem Hata mesajı göstermelidir")
+    public void sistemmHataMesajiGostermelidir() {
+        String expectedErrorMessage = "Müşteri seçiniz";
+        WaitUtils.waitForVisibility(proformaPage.hataMesaji, 10);
+        Assert.assertEquals("Hata mesajı beklendiği gibi değil",
+            expectedErrorMessage, proformaPage.hataMesaji.getText());
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
