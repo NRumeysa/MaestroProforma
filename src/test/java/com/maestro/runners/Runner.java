@@ -15,7 +15,7 @@ import org.junit.runner.RunWith;
         },
         features = "src/test/resources/features",
         glue = {"com/maestro/stepDefinitions", "com/maestro/hooks"},
-        tags = "@proforma",
+        tags = "@TC02",
         dryRun = false
 )
 

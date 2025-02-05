@@ -210,4 +210,7 @@ public class ProformaPage {
     @FindBy(xpath = "//div[contains(@class, 'alert-success')]//div[@class='ui-pnotify-text']")
     public WebElement basariliKayitMesaji;
 
+    @FindBy(xpath = "//div[@class='bootbox-body']")
+    public WebElement hataMesaji;
+
 }

@@ -129,10 +129,8 @@ public class ProformaStepDef {
 
         WaitUtils.waitForPageToLoad(10);
 
-
         JavascriptExecutor js = (JavascriptExecutor) Driver.getDriver();
         js.executeScript("$('#ddDeliveryAddress').select2('open');");
-
 
         WebDriverWait wait = new WebDriverWait(Driver.getDriver(), Duration.ofSeconds(15));
         WebElement searchBox = Driver.getDriver().findElement(By.xpath("//span[@class='select2-search select2-search--dropdown']//input[@class='select2-search__field']"));
@@ -177,7 +175,6 @@ public class ProformaStepDef {
         WaitUtils.waitForVisibility(proformaPage.basariliKayitBaslik, 10);
         WaitUtils.waitForVisibility(proformaPage.basariliKayitMesaji, 10);
 
-
         String expectedTitle = "VH3 KANSAYIM CİHAZI";
         String expectedMessage = "Ürün sipariş kalemlerine eklendi";
 
@@ -185,5 +182,41 @@ public class ProformaStepDef {
                 expectedTitle, proformaPage.basariliKayitBaslik.getText());
         Assert.assertEquals("Başarılı kayıt mesajı beklendiği gibi değil",
                 expectedMessage, proformaPage.basariliKayitMesaji.getText());
+    }
+
+    //-----------------------------------------tc01---------------------------------------------
+
+
+
+    @Given("Kullanıcı hesaba giriş yapmış olmalıdır")
+    public void kullaniciHesabaGirisYapmisOlmalidir() {
+        kullaniciSistemeGirisYapmisDurumda();
+    }
+
+    @And("Tarih alani bos birakilir")
+    public void tarihAlaniBosBirakilir() {
+        WaitUtils.waitForClickablility(proformaPage.dateBox, 10);
+        proformaPage.dateBox.click();
+        proformaPage.dateBox.clear();
+        proformaPage.musteriText.click(); // focus'u tarih alanından çıkarmak için
+    }
+
+    @And("Kalemler alanindan veri secilmeye calisildiginda")
+    public void kalemlerAlanindanVeriSecilmeyeCalisildiginda() {
+        JSUtils.JSscrollIntoView(proformaPage.kalemlerLink);
+        WaitUtils.waitForClickablility(proformaPage.kalemlerLink, 10);
+        proformaPage.kalemlerLink.click();
+
+        WaitUtils.waitForClickablility(proformaPage.urunEkleButon, 10);
+        JavascriptExecutor js = (JavascriptExecutor) Driver.getDriver();
+        js.executeScript("arguments[0].click();", proformaPage.urunEkleButon);
+    }
+
+    @Then("Sistem hata mesajı göstermelidir")
+    public void sistemHataMesajiGostermelidir() {
+        String expectedErrorMessage = "AddProduct(): String was not recognized as a valid DateTime.";
+        WaitUtils.waitForVisibility(proformaPage.hataMesaji, 10);
+        Assert.assertEquals("Hata mesajı beklendiği gibi değil", 
+            expectedErrorMessage, proformaPage.hataMesaji.getText());
     }
 }
