@@ -21,6 +21,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Set;
 
 public class ProformaStepDef {
 
@@ -388,4 +389,140 @@ public class ProformaStepDef {
         Assert.assertEquals("Müşteri adı beklendiği gibi görüntülenmiyor", expectedTabela, actualMusteriAdi);
     }
 
+
+    //-----------------------------------------tc06-------------------------------------
+
+    @And("Tabela adi alani bos birakilir")
+    public void tabelaAdiAlaniBosBirakilir() {
+        // Alan zaten boş olarak geliyor, ekstra işleme gerek yok
+    }
+
+    @And("yeni musteri kaydet butonuna tiklanir")
+    public void yeniMusteriKaydetButonunaTiklanir() {
+        WaitUtils.waitForClickablility(proformaPage.yeniMusteriKaydetButon, 10);
+        proformaPage.yeniMusteriKaydetButon.click();
+    }
+
+    @Then("sistemin musteri kaydını gerceklestirmedigi dogrulanir")
+    public void sisteminMusteriKaydiniGerceklestirmedigiDogrulanir() {
+        // Hata mesajının görünmesini bekle
+        WebElement hataMesaji = WaitUtils.waitForVisibility(
+            Driver.getDriver().findElement(By.xpath("//div[@class='bootbox-body'][contains(text(),'Cari Adı giriniz')]")), 
+            10
+        );
+        
+        // Hata mesajının doğru olduğunu kontrol et
+        String expectedMessage = "Cari Adı giriniz";
+        Assert.assertEquals("Hata mesajı beklendiği gibi değil", 
+            expectedMessage, 
+            hataMesaji.getText()
+        );
+
+
+    }
+
+
+    //-----------------------------------------tc07-------------------------------------
+
+    @And("Duzenle butonuna tiklanir")
+    public void duzenleButonunaTiklanir() {
+        // Mevcut sekmenin handle'ını al
+        String mainWindow = Driver.getDriver().getWindowHandle();
+        
+        // JavaScript ile tıkla
+        JavascriptExecutor js = (JavascriptExecutor) Driver.getDriver();
+        js.executeScript("arguments[0].click();", proformaPage.duzenleButon);
+        
+        // Yeni sekmeye geç
+        WaitUtils.waitFor(2); // Yeni sekmenin açılmasını bekle
+        Set<String> windows = Driver.getDriver().getWindowHandles();
+        for (String window : windows) {
+            if (!window.equals(mainWindow)) {
+                Driver.getDriver().switchTo().window(window);
+                break;
+            }
+        }
+        
+        // Yeni sayfanın yüklenmesini bekle
+        WaitUtils.waitForPageToLoad(10);
+    }
+
+    @And("Fatura unvani alanina {string} girer")
+    public void faturaUnvaniAlaninaGirer(String faturaUnvani) {
+        WaitUtils.waitForVisibility(proformaPage.faturaUnvaniBox, 10);
+        proformaPage.faturaUnvaniBox.sendKeys(faturaUnvani);
+        proformaPage.faturaUnvaniText.click(); //focus icin
+    }
+
+    @And("Tabela adi alaninin otomatik geldigi dogrulanir")
+    public void tabelaAdiAlanininOtomatikGeldigiDogrulanir() {
+        WaitUtils.waitForVisibility(proformaPage.tabelaAdiBox, 10);
+        String expectedText = "*GAZİ VETERİNER KLİNİĞİ";
+        String actualText = proformaPage.tabelaAdiBox.getDomProperty("value");
+        Assert.assertEquals("Tabela adı beklendiği gibi gelmedi", expectedText, actualText);
+    }
+
+    @And("Vergi no alanina {string} girer")
+    public void vergiNoAlaninaGirer(String arg0) {
+    }
+
+    @And("Vergi dairesi alanina {string} girer")
+    public void vergiDairesiAlaninaGirer(String arg0) {
+    }
+
+    @And("Satis Temsilcisi alanina {string} girer")
+    public void satisTemsilcisiAlaninaGirer(String arg0) {
+    }
+
+    @And("Genel Bilgiler basligina tiklanir")
+    public void genelBilgilerBasliginaTiklanir() {
+    }
+
+    @And("Portfoy alanina {string} girer")
+    public void portfoyAlaninaGirer(String arg0) {
+    }
+
+    @And("Adres Bilgileri basligina tiklanir")
+    public void adresBilgileriBasliginaTiklanir() {
+    }
+
+    @And("İl alanindan {string} secilir")
+    public void ilAlanindanSecilir(String arg0) {
+    }
+
+    @And("İlçe alanindan {string} secilir")
+    public void ilçeAlanindanSecilir(String arg0) {
+    }
+
+    @And("Posta kodu alanina {string} girer")
+    public void postaKoduAlaninaGirer(String arg0) {
+    }
+
+    @And("Adres alanina {string} girer")
+    public void adresAlaninaGirer(String arg0) {
+    }
+
+    @And("Adres alaninda Kaydet butonuna tiklanir")
+    public void adresAlanindaKaydetButonunaTiklanir() {
+    }
+
+    @And("Adres Listesi alaninda kaydedilen bilgilerin görüntülendigi dogrulanir")
+    public void adresListesiAlanindaKaydedilenBilgilerinGörüntülendigiDogrulanir() {
+    }
+
+    @And("Yetkili Adi alanina {string} girilir")
+    public void yetkiliAdiAlaninaGirilir(String arg0) {
+    }
+
+    @And("Yetkili adi alaninda Kaydet butonuna tiklanir")
+    public void yetkiliAdiAlanindaKaydetButonunaTiklanir() {
+    }
+
+    @And("Genel kayit icin Kaydet-Proforma butonuna tiklanir")
+    public void genelKayitIcinKaydetProformaButonunaTiklanir() {
+    }
+
+    @Then("Duzenlenen bilgilerin Proforma kayit alaninda görüntülendigi dogrulanir")
+    public void duzenlenenBilgilerinProformaKayitAlanindaGörüntülendigiDogrulanir() {
+    }
 }

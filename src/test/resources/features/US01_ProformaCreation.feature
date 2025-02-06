@@ -57,7 +57,7 @@ Feature: Proforma Oluşturma ve Doğrulama
           When yeni butonuna tiklar
           And musteri alaninda + butonuna tıklanir
           And Tabela adi alani bos birakilir
-          And Kaydet butonuna tiklanir
+          And yeni musteri kaydet butonuna tiklanir
           Then sistemin musteri kaydını gerceklestirmedigi dogrulanir
 
 
@@ -71,14 +71,16 @@ Feature: Proforma Oluşturma ve Doğrulama
             And Vergi no alanina "1234567890" girer
             And Vergi dairesi alanina "ABC" girer
             And Satis Temsilcisi alanina "RUMEYSA KISACIK" girer
+            And Genel Bilgiler basligina tiklanir
+            And Portfoy alanina "RUMEYSA KISACIK" girer
             And Adres Bilgileri basligina tiklanir
             And İl alanindan "BURDUR" secilir
             And İlçe alanindan "TEFENNİ" secilir
             And Posta kodu alanina "15000" girer
             And Adres alanina "test" girer
-            And Duzenle alaninda Kaydet butonuna tiklanir
+            And Adres alaninda Kaydet butonuna tiklanir
             And Adres Listesi alaninda kaydedilen bilgilerin görüntülendigi dogrulanir
             And Yetkili Adi alanina "TESTER" girilir
             And Yetkili adi alaninda Kaydet butonuna tiklanir
-            And Genel kayit icin Kaydet/Proforma butonuna tiklanir
+            And Genel kayit icin Kaydet-Proforma butonuna tiklanir
             Then Duzenlenen bilgilerin Proforma kayit alaninda görüntülendigi dogrulanir

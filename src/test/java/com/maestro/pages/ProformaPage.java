@@ -87,7 +87,7 @@ public class ProformaPage {
     @FindBy(id = "spnAccountPopup")
     public WebElement yeniMusteriEkleButon;
 
-    @FindBy(xpath = "(//input[@name='Name'])[2]")
+    @FindBy(id = "txtName")
     public WebElement tabelaAdiBox;
 
     @FindBy(xpath = "//button[contains(text(), 'Kaydet')]")
@@ -95,6 +95,12 @@ public class ProformaPage {
 
     @FindBy(xpath = "(//label[contains(text(), 'Adı')])[4]")
     public WebElement yeniMusteriAdiText;
+
+    @FindBy(id = "txtTitle")
+    public WebElement faturaUnvaniBox;
+
+    @FindBy(xpath = "//label[contains(text(), 'Fatura Ünvanı')]")
+    public WebElement faturaUnvaniText;
 
 
     //---------------------------Yazdırma Parametreleri-----------------------------------------
@@ -211,6 +217,9 @@ public class ProformaPage {
 
     @FindBy(xpath = "//a[@onclick='Save(false)' and contains(@class,'btn-dark') and text()='Kaydet']")
     public WebElement kaydetButon;
+
+    @FindBy(id = "btnOpenAccount")
+    public WebElement duzenleButon;
 
 //      Kaydet   |    Kaydet/Yazdır    |    Listeye Dön   alanı
 
