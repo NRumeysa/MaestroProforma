@@ -71,7 +71,7 @@ Feature: Proforma Oluşturma ve Doğrulama
             And Vergi dairesi alanina "ABC" girer
             And Satis Temsilcisi alanina "RUMEYSA KISACIK" girer
             And Genel Bilgiler basligina tiklanir
-            And Portfoy alanina "RUMEYSA KISACIK" girer
+            And Portfoy alanina "RU" girer
             And Adres Bilgileri basligina tiklanir
             And İl alanindan "BURDUR" secilir
             And İlçe alanindan "TEFENNİ" secilir

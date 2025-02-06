@@ -130,7 +130,7 @@ public class ProformaStepDef {
         try {
             WaitUtils.waitForPageToLoad(10);
             
-            // Select2 container’ın yüklenmesini bekle
+            // Select2 container'ın yüklenmesini bekle
             WebDriverWait wait = new WebDriverWait(Driver.getDriver(), Duration.ofSeconds(15));
             wait.until(ExpectedConditions.presenceOfElementLocated(
                 By.cssSelector(".select2-container--default")));
@@ -140,7 +140,7 @@ public class ProformaStepDef {
             js.executeScript("$('#ddDeliveryAddress').select2('open');");
             WaitUtils.waitFor(1);
             
-            // Search box’ı bul ve değer gir
+            // Search box'ı bul ve değer gir
             By searchBoxLocator = By.cssSelector("span.select2-search.select2-search--dropdown input.select2-search__field");
             WebElement searchBox = wait.until(ExpectedConditions.presenceOfElementLocated(searchBoxLocator));
             
@@ -476,15 +476,69 @@ public class ProformaStepDef {
     }
 
     @And("Satis Temsilcisi alanina {string} girer")
-    public void satisTemsilcisiAlaninaGirer(String arg0) {
+    public void satisTemsilcisiAlaninaGirer(String satisTemsilcisi) {
+        // PreLoader'ın kaybolmasını bekle
+        WebDriverWait wait = new WebDriverWait(Driver.getDriver(), Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("PreLoader")));
+        
+        // Select2 dropdown'ı aç
+        WaitUtils.waitForClickablility(proformaPage.satisTemsilcisiContainer, 10);
+        proformaPage.satisTemsilcisiContainer.click();
+        
+        // Seçeneği bul ve seç
+        WebElement option = wait.until(ExpectedConditions.elementToBeClickable(
+            By.xpath("//li[contains(@class, 'select2-results__option') and text()='" + satisTemsilcisi + "']")
+        ));
+        option.click();
+        
+        // Seçimin doğru yapıldığını kontrol et
+        WaitUtils.waitFor(1);
+        Assert.assertEquals("Satış temsilcisi seçimi yanlış", 
+            satisTemsilcisi, 
+            proformaPage.satisTemsilcisiContainer.getText()
+        );
     }
 
     @And("Genel Bilgiler basligina tiklanir")
     public void genelBilgilerBasliginaTiklanir() {
+        proformaPage.genelBilgilerBaslik.click();
     }
 
     @And("Portfoy alanina {string} girer")
-    public void portfoyAlaninaGirer(String arg0) {
+    public void portfoyAlaninaGirer(String portfoy) {
+            // Portföy etiketine scroll
+            JavascriptExecutor js = (JavascriptExecutor) Driver.getDriver();
+            js.executeScript("arguments[0].scrollIntoView(true);", proformaPage.portfoyLabel);
+            WaitUtils.waitFor(2);
+
+
+
+            proformaPage.portfoyContainer.click();
+
+
+
+            WaitUtils.waitFor(2);
+
+        while (true) {
+            List<WebElement> selectedItems = Driver.getDriver().findElements(By.xpath("//ul[@class='select2-selection__rendered']/li[@class='select2-selection__choice']"));
+
+            // Eğer silinecek öğe kalmadıysa döngüden çık
+            if (selectedItems.isEmpty()) {
+                break;
+            }
+
+            try {
+                // İlk öğenin içindeki "×" butonuna tıklayarak sil
+                selectedItems.get(0).findElement(By.xpath(".//span[@class='select2-selection__choice__remove']")).click();
+                WaitUtils.waitFor(1); // Silme işleminin tamamlanması için kısa bekleme
+            } catch (Exception e) {
+                System.out.println("Öğe kaldırılırken hata oluştu: " + e.getMessage());
+            }
+        }
+
+
+        proformaPage.portfoyContainer.sendKeys(portfoy , Keys.ENTER);
+
     }
 
     @And("Adres Bilgileri basligina tiklanir")

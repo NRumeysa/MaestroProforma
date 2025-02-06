@@ -108,6 +108,16 @@ public class ProformaPage {
     @FindBy(xpath = "//label[contains(text(),'V.D')]")
     public WebElement vergiDairesiText;
 
+    @FindBy(xpath = "//label[text()='Portföy']")
+    public WebElement portfoyLabel;
+
+    @FindBy(css = "input.select2-search__field")
+    public WebElement portfoyContainer;
+
+    @FindBy(xpath = "//span[@class='select2-selection__choice__remove']")
+    public WebElement portfoySecilen;
+
+
 
     //---------------------------Yazdırma Parametreleri-----------------------------------------
 
@@ -226,6 +236,15 @@ public class ProformaPage {
 
     @FindBy(id = "btnOpenAccount")
     public WebElement duzenleButon;
+
+    @FindBy(id = "ddIDPersonnelAccountSeller")
+    public WebElement satisTemsilcisiDropdown;
+
+    @FindBy(id = "select2-ddIDPersonnelAccountSeller-container")
+    public WebElement satisTemsilcisiContainer;
+
+    @FindBy(xpath = "//a[@data-toggle='collapse' and @href='#collapseTwo']")
+    public WebElement genelBilgilerBaslik;
 
 //      Kaydet   |    Kaydet/Yazdır    |    Listeye Dön   alanı
 
