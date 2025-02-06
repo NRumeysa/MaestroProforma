@@ -68,7 +68,6 @@ Feature: Proforma Oluşturma ve Doğrulama
             And Duzenle butonuna tiklanir
             And Fatura unvani alanina "NRK" girer
             And Tabela adi alaninin otomatik geldigi dogrulanir
-            And Vergi no alanina "1234567890" girer
             And Vergi dairesi alanina "ABC" girer
             And Satis Temsilcisi alanina "RUMEYSA KISACIK" girer
             And Genel Bilgiler basligina tiklanir

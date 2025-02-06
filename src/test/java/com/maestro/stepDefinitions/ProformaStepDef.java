@@ -130,7 +130,7 @@ public class ProformaStepDef {
         try {
             WaitUtils.waitForPageToLoad(10);
             
-            // Select2 container'ın yüklenmesini bekle
+            // Select2 container’ın yüklenmesini bekle
             WebDriverWait wait = new WebDriverWait(Driver.getDriver(), Duration.ofSeconds(15));
             wait.until(ExpectedConditions.presenceOfElementLocated(
                 By.cssSelector(".select2-container--default")));
@@ -140,7 +140,7 @@ public class ProformaStepDef {
             js.executeScript("$('#ddDeliveryAddress').select2('open');");
             WaitUtils.waitFor(1);
             
-            // Search box'ı bul ve değer gir
+            // Search box’ı bul ve değer gir
             By searchBoxLocator = By.cssSelector("span.select2-search.select2-search--dropdown input.select2-search__field");
             WebElement searchBox = wait.until(ExpectedConditions.presenceOfElementLocated(searchBoxLocator));
             
@@ -449,9 +449,12 @@ public class ProformaStepDef {
 
     @And("Fatura unvani alanina {string} girer")
     public void faturaUnvaniAlaninaGirer(String faturaUnvani) {
+        WebDriverWait wait = new WebDriverWait(Driver.getDriver(), Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("PreLoader")));
         WaitUtils.waitForVisibility(proformaPage.faturaUnvaniBox, 10);
         proformaPage.faturaUnvaniBox.sendKeys(faturaUnvani);
-        proformaPage.faturaUnvaniText.click(); //focus icin
+        JavascriptExecutor js = (JavascriptExecutor) Driver.getDriver();
+        js.executeScript("arguments[0].click();", proformaPage.faturaUnvaniText);
     }
 
     @And("Tabela adi alaninin otomatik geldigi dogrulanir")
@@ -462,12 +465,14 @@ public class ProformaStepDef {
         Assert.assertEquals("Tabela adı beklendiği gibi gelmedi", expectedText, actualText);
     }
 
-    @And("Vergi no alanina {string} girer")
-    public void vergiNoAlaninaGirer(String arg0) {
-    }
-
     @And("Vergi dairesi alanina {string} girer")
-    public void vergiDairesiAlaninaGirer(String arg0) {
+    public void vergiDairesiAlaninaGirer(String vergiDairesi) {
+        WebDriverWait wait = new WebDriverWait(Driver.getDriver(), Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("PreLoader")));
+        WaitUtils.waitForVisibility(proformaPage.vergiDairesiBox, 10);
+        proformaPage.vergiDairesiBox.sendKeys(vergiDairesi);
+        JavascriptExecutor js = (JavascriptExecutor) Driver.getDriver();
+        js.executeScript("arguments[0].click();", proformaPage.vergiDairesiText);
     }
 
     @And("Satis Temsilcisi alanina {string} girer")

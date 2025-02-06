@@ -102,6 +102,12 @@ public class ProformaPage {
     @FindBy(xpath = "//label[contains(text(), 'Fatura Ünvanı')]")
     public WebElement faturaUnvaniText;
 
+    @FindBy(id = "txtTaxOffice")
+    public WebElement vergiDairesiBox;
+
+    @FindBy(xpath = "//label[contains(text(),'V.D')]")
+    public WebElement vergiDairesiText;
+
 
     //---------------------------Yazdırma Parametreleri-----------------------------------------
 
