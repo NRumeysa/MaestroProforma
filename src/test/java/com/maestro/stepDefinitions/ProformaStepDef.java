@@ -15,12 +15,12 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class ProformaStepDef {
 
@@ -59,7 +59,6 @@ public class ProformaStepDef {
 
     @And("tarih bilgisinin otomatik olarak geldigini dogrular")
     public void tarihBilgisininOtomatikOlarakGeldiginiDogrular() {
-
         WaitUtils.waitForClickablility(proformaPage.dateBox, 20);
         proformaPage.dateBox.click();
 
@@ -74,7 +73,6 @@ public class ProformaStepDef {
 
         Assert.assertEquals(expectedDate, actualDate);
         proformaPage.musteriText.click();
-
     }
 
     @And("musteri alanindan secer")
@@ -128,46 +126,71 @@ public class ProformaStepDef {
 
     @And("teslimat alanina {string} girer")
     public void teslimatAlaninaGirer(String teslimatAdresi) {
-
-        WaitUtils.waitForPageToLoad(10);
-
-        JavascriptExecutor js = (JavascriptExecutor) Driver.getDriver();
-        js.executeScript("$('#ddDeliveryAddress').select2('open');");
-
-        WebDriverWait wait = new WebDriverWait(Driver.getDriver(), Duration.ofSeconds(15));
-        WebElement searchBox = Driver.getDriver().findElement(By.xpath("//span[@class='select2-search select2-search--dropdown']//input[@class='select2-search__field']"));
-        wait.until(driver -> searchBox.isDisplayed());
-
-        searchBox.clear();
-        searchBox.sendKeys(teslimatAdresi);
-        WaitUtils.waitFor(1);
-        searchBox.sendKeys(Keys.ENTER);
+        try {
+            WaitUtils.waitForPageToLoad(10);
+            
+            // Select2 container'ın yüklenmesini bekle
+            WebDriverWait wait = new WebDriverWait(Driver.getDriver(), Duration.ofSeconds(15));
+            wait.until(ExpectedConditions.presenceOfElementLocated(
+                By.cssSelector(".select2-container--default")));
+            
+            // Select2'yu JavaScript ile aç
+            JavascriptExecutor js = (JavascriptExecutor) Driver.getDriver();
+            js.executeScript("$('#ddDeliveryAddress').select2('open');");
+            WaitUtils.waitFor(1);
+            
+            // Search box'ı bul ve değer gir
+            By searchBoxLocator = By.cssSelector("span.select2-search.select2-search--dropdown input.select2-search__field");
+            WebElement searchBox = wait.until(ExpectedConditions.presenceOfElementLocated(searchBoxLocator));
+            
+            searchBox.sendKeys(teslimatAdresi);
+            WaitUtils.waitFor(1);
+            
+            // Dropdown seçeneklerinin yüklenmesini bekle
+            By optionLocator = By.cssSelector(".select2-results__option");
+            wait.until(ExpectedConditions.presenceOfElementLocated(optionLocator));
+            
+            // İlk eşleşen seçeneği seç
+            WebElement option = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//li[contains(@class, 'select2-results__option') and contains(text(), '" + teslimatAdresi + "')]")));
+            option.click();
+            
+        } catch (Exception e) {
+            System.out.println("Teslimat adresi girilirken hata oluştu: " + e.getMessage());
+            // Mevcut Select2 durumunu kontrol et
+            try {
+                WebElement select2Element = Driver.getDriver().findElement(By.id("ddDeliveryAddress"));
+                System.out.println("Select2 elementi mevcut: " + select2Element.isDisplayed());
+                System.out.println("Select2 class değeri: " + select2Element.getAttribute("class"));
+            } catch (Exception ex) {
+                System.out.println("Select2 elementi bulunamadı");
+            }
+            throw e;
+        }
     }
 
     @And("kalemler alanindan {string} secer")
     public void kalemlerAlanindanSecer(String kalem) {
-        JSUtils.JSscrollIntoView(proformaPage.kalemlerLink);
-        WaitUtils.waitForClickablility(proformaPage.kalemlerLink, 10);
-        proformaPage.kalemlerLink.click();
-
-        Driver.getDriver().navigate().refresh();
-        WaitUtils.waitFor(2);
-        // Refresh sonrası elementleri yeniden initialize et
-        PageFactory.initElements(Driver.getDriver(), proformaPage);
-
-        JSUtils.JSscrollIntoView(proformaPage.kalemlerLink);
-        WaitUtils.waitForClickablility(proformaPage.kalemlerLink, 10);
-        proformaPage.kalemlerLink.click();
-
-        WaitUtils.waitForPageToLoad(10);
-        WaitUtils.waitForClickablility(proformaPage.urunEkleButon, 15);
-
-        JavascriptExecutor js = (JavascriptExecutor) Driver.getDriver();
-        js.executeScript("arguments[0].click();", proformaPage.urunEkleButon);
-
-        WaitUtils.waitForVisibility(proformaPage.kapatButon, 10);
-        WaitUtils.waitForClickablility(proformaPage.kapatButon, 10);
-        proformaPage.kapatButon.click();
+        try {
+            // Kalemler linkine scroll ve tıklama
+            JSUtils.JSscrollIntoView(proformaPage.kalemlerLink);
+            WebDriverWait wait = new WebDriverWait(Driver.getDriver(), Duration.ofSeconds(10));
+            wait.until(ExpectedConditions.elementToBeClickable(proformaPage.kalemlerLink));
+            proformaPage.kalemlerLink.click();
+            
+            // Ürün ekleme butonunu bekle ve tıkla
+            wait.until(ExpectedConditions.elementToBeClickable(proformaPage.urunEkleButon));
+            JavascriptExecutor js = (JavascriptExecutor) Driver.getDriver();
+            js.executeScript("arguments[0].click();", proformaPage.urunEkleButon);
+            
+            // Kapatma butonunu bekle ve tıkla
+            wait.until(ExpectedConditions.elementToBeClickable(proformaPage.kapatButon));
+            proformaPage.kapatButon.click();
+            
+        } catch (Exception e) {
+            System.out.println("Kalemler alanından ürün seçilirken hata oluştu: " + e.getMessage());
+            throw e;
+        }
     }
 
     @When("kaydet butonuna tiklanir")
@@ -195,9 +218,6 @@ public class ProformaStepDef {
                 expectedMessage, proformaPage.basariliKayitMesaji.getText());
     }
 
-
-
-
     //-----------------------------------------tc02---------------------------------------------
 
     @Given("Kullanıcı hesaba giriş yapmış olmalıdır")
@@ -210,45 +230,59 @@ public class ProformaStepDef {
         WaitUtils.waitForClickablility(proformaPage.dateBox, 10);
         proformaPage.dateBox.click();
         proformaPage.dateBox.clear();
+        
+        // JavaScript ile de temizleyelim
+        JavascriptExecutor js = (JavascriptExecutor) Driver.getDriver();
+        js.executeScript("arguments[0].value = '';", proformaPage.dateBox);
+        
+        // Değerin boş olduğunu kontrol edelim
+        String dateValue = proformaPage.dateBox.getDomProperty("value");
+        Assert.assertTrue("Tarih alanı boş değil!", dateValue == null || dateValue.isEmpty());
+        
         proformaPage.musteriText.click(); // focus'u tarih alanından çıkarmak için
     }
 
     @And("Kalemler alanindan veri secilmeye calisildiginda")
     public void kalemlerAlanindanVeriSecilmeyeCalisildiginda() {
-        JSUtils.JSscrollIntoView(proformaPage.kalemlerLink);
-        WaitUtils.waitForClickablility(proformaPage.kalemlerLink, 10);
-        proformaPage.kalemlerLink.click();
-
-        Driver.getDriver().navigate().refresh();
-        WaitUtils.waitFor(2);
-        // Refresh sonrası elementleri yeniden initialize et
-        PageFactory.initElements(Driver.getDriver(), proformaPage);
-
-        JSUtils.JSscrollIntoView(proformaPage.kalemlerLink);
-        WaitUtils.waitForClickablility(proformaPage.kalemlerLink, 10);
-        proformaPage.kalemlerLink.click();
-
-        WaitUtils.waitForPageToLoad(10);
-        WaitUtils.waitForClickablility(proformaPage.urunEkleButon, 15);
-
-        JavascriptExecutor js = (JavascriptExecutor) Driver.getDriver();
-        js.executeScript("arguments[0].click();", proformaPage.urunEkleButon);
-
-        WaitUtils.waitForVisibility(proformaPage.kapatButon, 10);
-        WaitUtils.waitForClickablility(proformaPage.kapatButon, 10);
-        proformaPage.kapatButon.click();
+        try {
+            // Kalemler linkine scroll ve tıklama
+            JSUtils.JSscrollIntoView(proformaPage.kalemlerLink);
+            WaitUtils.waitForClickablility(proformaPage.kalemlerLink, 10);
+            proformaPage.kalemlerLink.click();
+            
+            // Sayfanın yüklenmesini bekle
+            WaitUtils.waitForPageToLoad(10);
+            
+            // Ürün ekleme butonunu bekle ve tıkla
+            WaitUtils.waitForClickablility(proformaPage.urunEkleButon, 15);
+            JavascriptExecutor js = (JavascriptExecutor) Driver.getDriver();
+            js.executeScript("arguments[0].click();", proformaPage.urunEkleButon);
+            
+            // Hata mesajının görünmesini bekle
+            WaitUtils.waitForVisibility(proformaPage.hataMesaji, 10);
+            
+        } catch (Exception e) {
+            System.out.println("Kalemler alanından veri seçilirken hata: " + e.getMessage());
+            throw e;
+        }
     }
 
     @Then("Sistem hata mesajı göstermelidir")
     public void sistemHataMesajiGostermelidir() {
-        String expectedErrorMessage = "AddProduct(): String was not recognized as a valid DateTime.";
-        WaitUtils.waitForVisibility(proformaPage.hataMesaji, 10);
-        Assert.assertEquals("Hata mesajı beklendiği gibi değil", 
-            expectedErrorMessage, proformaPage.hataMesaji.getText());
+        try {
+            String expectedErrorMessage = "AddProduct(): String was not recognized as a valid DateTime.";
+            WaitUtils.waitForVisibility(proformaPage.hataMesaji, 10);
+            
+            // Hata mesajının tam metnini yazdıralım
+            System.out.println("Görünen hata mesajı: " + proformaPage.hataMesaji.getText());
+            
+            Assert.assertEquals("Hata mesajı beklendiği gibi değil",
+                    expectedErrorMessage, proformaPage.hataMesaji.getText());
+        } catch (Exception e) {
+            System.out.println("Hata mesajı kontrolü sırasında hata: " + e.getMessage());
+            throw e;
+        }
     }
-
-
-
 
     //-----------------------------------------tc03---------------------------------------------
 
@@ -266,10 +300,10 @@ public class ProformaStepDef {
         String expectedErrorMessage = "Müşteri seçiniz";
         WaitUtils.waitForVisibility(proformaPage.hataMesaji, 10);
         Assert.assertEquals("Hata mesajı beklendiği gibi değil",
-            expectedErrorMessage, proformaPage.hataMesaji.getText());
+                expectedErrorMessage, proformaPage.hataMesaji.getText());
     }
 
-//-----------------------------------------tc04-------------------------------------
+    //-----------------------------------------tc04-------------------------------------
 
     @And("tarih alanina {string} girer")
     public void tarihAlaninaGirer(String tarih) {
@@ -280,21 +314,21 @@ public class ProformaStepDef {
         WaitUtils.waitForClickablility(proformaPage.dateBox, 10);
         proformaPage.dateBox.click();
         proformaPage.dateBox.clear();
-        
+
         // JavaScript ile değeri set et
         JavascriptExecutor js = (JavascriptExecutor) Driver.getDriver();
         js.executeScript("arguments[0].value = arguments[1]", proformaPage.dateBox, tarih);
-        
+
         // Normal yolla da gönder
         proformaPage.dateBox.sendKeys(tarih);
         proformaPage.dateBox.sendKeys(Keys.ENTER);
-        
+
         // Focus'u değiştir
         proformaPage.musteriText.click();
-        
+
         // Kontrol et
         WaitUtils.waitFor(1);
-        String currentValue = proformaPage.dateBox.getAttribute("value");
+        String currentValue = proformaPage.dateBox.getDomProperty("value");
         System.out.println("Girilen değer: " + currentValue); // Debug için
     }
 
@@ -303,8 +337,9 @@ public class ProformaStepDef {
         String expectedErrorMessage = "AddProduct(): The string was not recognized as a valid DateTime. There is an unknown word starting at index 0.";
         WaitUtils.waitForVisibility(proformaPage.hataMesaji, 10);
         Assert.assertEquals("Hata mesajı beklendiği gibi değil",
-            expectedErrorMessage, proformaPage.hataMesaji.getText());
+                expectedErrorMessage, proformaPage.hataMesaji.getText());
     }
+
 
     //-----------------------------------------tc05-------------------------------------
 
@@ -336,20 +371,21 @@ public class ProformaStepDef {
     public void musteriAlanindaSecilmisOlduguDogrulanir(String expectedTabela) {
         // Önce sayfanın yüklenmesini bekleyelim
         WaitUtils.waitForPageToLoad(10);
-        
+
         // Placeholder olmayan elementi bekleyelim (yani müşteri seçilmiş durumu)
         WebDriverWait wait = new WebDriverWait(Driver.getDriver(), Duration.ofSeconds(10));
         wait.until(ExpectedConditions.invisibilityOfElementWithText(
-            By.cssSelector("#select2-ddAccount-container .select2-selection__placeholder"),
-            "Müşteri Seçiniz"
+                By.cssSelector("#select2-ddAccount-container .select2-selection__placeholder"),
+                "Müşteri Seçiniz"
         ));
-        
+
         // Seçilen müşteri adını alalım
         String actualMusteriAdi = ((JavascriptExecutor) Driver.getDriver())
                 .executeScript("return document.querySelector('#select2-ddAccount-container').innerText")
                 .toString().trim();
-                
+
         System.out.println("Seçilen müşteri: " + actualMusteriAdi);
         Assert.assertEquals("Müşteri adı beklendiği gibi görüntülenmiyor", expectedTabela, actualMusteriAdi);
     }
+
 }
