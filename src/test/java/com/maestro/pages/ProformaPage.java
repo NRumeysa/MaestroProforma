@@ -23,12 +23,6 @@ public class ProformaPage {
     @FindBy(id = "select2-ddAccount-container")
     public WebElement accountDropdown;
 
-    @FindBy(css = "#select2-ddAccount-container")
-    public WebElement selectedCustomerText;
-
-    @FindBy(css = "#select2-ddAccount-container .select2-selection__placeholder")
-    public WebElement customerPlaceholder;
-
     @FindBy(xpath = "(//label[contains(text(), 'Müşteri')])[1]")
     public WebElement musteriText;
 
@@ -102,6 +96,8 @@ public class ProformaPage {
     @FindBy(xpath = "//label[contains(text(), 'Fatura Ünvanı')]")
     public WebElement faturaUnvaniText;
 
+
+    //düzenle
     @FindBy(id = "txtTaxOffice")
     public WebElement vergiDairesiBox;
 
@@ -114,9 +110,24 @@ public class ProformaPage {
     @FindBy(css = "input.select2-search__field")
     public WebElement portfoyContainer;
 
-    @FindBy(xpath = "//span[@class='select2-selection__choice__remove']")
-    public WebElement portfoySecilen;
 
+    @FindBy(xpath = "//a[contains(text(), 'Adres Bilgileri')]")
+    public WebElement duzenleAdresBilgileriTitle;
+
+    @FindBy(id= "select2-ddAccountAddressCity-container")
+    public WebElement duzenleIlDropdown;
+
+    @FindBy(id= "select2-ddAccountAddressTown-container")
+    public WebElement duzenleIlceDropdown;
+
+    @FindBy(id= "txtAddressPostCode")
+    public WebElement duzenlePostaKoduBox;
+
+    @FindBy(xpath = "//textarea[@id='txtAccountAddress']")
+    public WebElement duzenleAdresBox;
+
+    @FindBy(id = "btnAddAddress")
+    public WebElement duzenleAdresKaydetButton;
 
 
     //---------------------------Yazdırma Parametreleri-----------------------------------------

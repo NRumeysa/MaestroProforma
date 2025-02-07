@@ -9,12 +9,11 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.junit.Assert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
@@ -178,6 +177,9 @@ public class ProformaStepDef {
             WebDriverWait wait = new WebDriverWait(Driver.getDriver(), Duration.ofSeconds(10));
             wait.until(ExpectedConditions.elementToBeClickable(proformaPage.kalemlerLink));
             proformaPage.kalemlerLink.click();
+            
+            // Sayfanın yüklenmesini bekle
+            WaitUtils.waitForPageToLoad(10);
             
             // Ürün ekleme butonunu bekle ve tıkla
             wait.until(ExpectedConditions.elementToBeClickable(proformaPage.urunEkleButon));
@@ -506,19 +508,16 @@ public class ProformaStepDef {
 
     @And("Portfoy alanina {string} girer")
     public void portfoyAlaninaGirer(String portfoy) {
-            // Portföy etiketine scroll
-            JavascriptExecutor js = (JavascriptExecutor) Driver.getDriver();
-            js.executeScript("arguments[0].scrollIntoView(true);", proformaPage.portfoyLabel);
-            WaitUtils.waitFor(2);
+        // Portföy etiketine scroll
+        JavascriptExecutor js = (JavascriptExecutor) Driver.getDriver();
+        js.executeScript("arguments[0].scrollIntoView(true);", proformaPage.portfoyLabel);
+        WaitUtils.waitFor(2);
 
+        // Portföy container'a tıkla
+        proformaPage.portfoyContainer.click();
+        WaitUtils.waitFor(2);
 
-
-            proformaPage.portfoyContainer.click();
-
-
-
-            WaitUtils.waitFor(2);
-
+        // Seçili öğeleri kaldır
         while (true) {
             List<WebElement> selectedItems = Driver.getDriver().findElements(By.xpath("//ul[@class='select2-selection__rendered']/li[@class='select2-selection__choice']"));
 
@@ -536,33 +535,42 @@ public class ProformaStepDef {
             }
         }
 
-
-        proformaPage.portfoyContainer.sendKeys(portfoy , Keys.ENTER);
-
+        // Portföy ismini gir ve ENTER tuşuna bas
+        proformaPage.portfoyContainer.sendKeys(portfoy, Keys.ENTER);
+        WaitUtils.waitFor(2);
     }
 
     @And("Adres Bilgileri basligina tiklanir")
     public void adresBilgileriBasliginaTiklanir() {
+     proformaPage.duzenleAdresBilgileriTitle.click();
+     WaitUtils.waitFor(2);
     }
 
     @And("İl alanindan {string} secilir")
-    public void ilAlanindanSecilir(String arg0) {
+    public void ilAlanindanSecilir(String il) {
+        ReusableMethods.scrollHome();
+        WaitUtils.waitFor(2);
+
     }
 
     @And("İlçe alanindan {string} secilir")
-    public void ilçeAlanindanSecilir(String arg0) {
+    public void ilceAlanindanSecilir(String arg0) {
+
     }
 
     @And("Posta kodu alanina {string} girer")
     public void postaKoduAlaninaGirer(String arg0) {
+
     }
 
     @And("Adres alanina {string} girer")
     public void adresAlaninaGirer(String arg0) {
+
     }
 
     @And("Adres alaninda Kaydet butonuna tiklanir")
     public void adresAlanindaKaydetButonunaTiklanir() {
+
     }
 
     @And("Adres Listesi alaninda kaydedilen bilgilerin görüntülendigi dogrulanir")
