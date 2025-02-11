@@ -29,7 +29,6 @@ public class ProformaPage {
     @FindBy(xpath = "(//input[@class='select2-search__field'])[3]")
     public WebElement musteriSecimiBox;
 
-
     @FindBy(id = "select2-ddAccountPerson-container")
     public WebElement yetkiliDropdown;
 
@@ -117,8 +116,14 @@ public class ProformaPage {
     @FindBy(id= "select2-ddAccountAddressCity-container")
     public WebElement duzenleIlDropdown;
 
+    @FindBy(xpath = "(//input[@class='select2-search__field'])[3]")
+    public WebElement duzenleilDropdownInput;
+
     @FindBy(id= "select2-ddAccountAddressTown-container")
     public WebElement duzenleIlceDropdown;
+
+    @FindBy(xpath = "(//input[@class='select2-search__field'])[3]")
+    public WebElement duzenleIlceDropdownInput;
 
     @FindBy(id= "txtAddressPostCode")
     public WebElement duzenlePostaKoduBox;
@@ -126,8 +131,51 @@ public class ProformaPage {
     @FindBy(xpath = "//textarea[@id='txtAccountAddress']")
     public WebElement duzenleAdresBox;
 
+    @FindBy(xpath = "(//label[contains(text(),'Adres ')])[1]")
+    public WebElement duzenleAdresTitle;
+
     @FindBy(id = "btnAddAddress")
     public WebElement duzenleAdresKaydetButton;
+
+    @FindBy(xpath = "//tbody/tr[last()]")
+    public WebElement duzenleAdresVerify;
+
+    @FindBy(xpath = "//a[contains(text(), 'Yetkili Bilgileri')]")
+    public WebElement duzenleYetkiliBilgileriTitle;
+
+
+    @FindBy(id = "txtAccountPersonName")
+    public WebElement duzenleYetkiliAdiBox;
+
+    @FindBy(id = "btnAddPerson")
+    public WebElement duzenleYetkiliKaydetButton;
+
+    @FindBy(xpath = "//a[@onclick='SaveToProforma()']")
+    public WebElement duzenleGenelKaydetButton;
+
+    @FindBy(id = "btnOpenAccountDetail")
+    public WebElement inceleButton;
+
+    @FindBy(id = "liListTitle")
+    public WebElement inceleCariListesiTitle;
+
+    @FindBy(id = "pnlMenu")
+    public WebElement inceleCariPanel;
+
+    @FindBy(xpath = "//*[@onclick='AddAccountPerson()']")
+    public WebElement yetkiliEkleButton;
+
+    @FindBy(xpath = "//input[@placeholder='Yetkili Adı']")
+    public WebElement yetkiliEkleAdiBox;
+
+    @FindBy(xpath = "//button[contains(text(),'Kaydet')]")
+    public WebElement yetkiliEkleKaydetButton;
+
+    @FindBy(id = "select2-ddAccountPerson-container")
+    public WebElement yetkiliAdi;
+
+    @FindBy(xpath = "(//*[.='Yetkili Adı giriniz'])[2]")
+    public WebElement yetkiliHataMesaji;
 
 
     //---------------------------Yazdırma Parametreleri-----------------------------------------

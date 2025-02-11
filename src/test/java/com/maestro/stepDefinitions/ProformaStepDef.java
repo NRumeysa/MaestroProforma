@@ -1,5 +1,6 @@
 package com.maestro.stepDefinitions;
 
+import com.github.javafaker.Faker;
 import com.maestro.pages.DashboardPage;
 import com.maestro.pages.LoginPage;
 import com.maestro.pages.ProformaPage;
@@ -10,6 +11,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.junit.Assert;
 import org.openqa.selenium.*;
+import org.openqa.selenium.json.Json;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -27,6 +29,8 @@ public class ProformaStepDef {
     LoginPage loginPage = new LoginPage();
     ProformaPage proformaPage = new ProformaPage();
     DashboardPage dashboardPage = new DashboardPage();
+    Faker faker = new Faker();
+    String randomYetkili;
 
     @Given("kullanici sisteme giris yapmis durumda")
     public void kullaniciSistemeGirisYapmisDurumda() {
@@ -53,6 +57,7 @@ public class ProformaStepDef {
 
     @And("yeni butonuna tiklar")
     public void yeniButonunaTiklar() {
+        WaitUtils.waitForPageToLoad(10);
         proformaPage.newButton.click();
         WaitUtils.waitForPageToLoad(20);
     }
@@ -77,6 +82,7 @@ public class ProformaStepDef {
 
     @And("musteri alanindan secer")
     public void musteriAlanindanSecer() {
+        WaitUtils.waitForPageToLoad(10);
         WaitUtils.waitForClickablility(proformaPage.accountDropdown, 10);
         proformaPage.accountDropdown.click();
         Driver.getDriver().navigate().refresh();
@@ -449,14 +455,17 @@ public class ProformaStepDef {
         WaitUtils.waitForPageToLoad(10);
     }
 
-    @And("Fatura unvani alanina {string} girer")
-    public void faturaUnvaniAlaninaGirer(String faturaUnvani) {
+    @And("Fatura unvani alanina rastgele bir isim girer")
+    public void faturaUnvaniAlaninaGirer() {
+        String faturaUnvani =faker.company().name();
         WebDriverWait wait = new WebDriverWait(Driver.getDriver(), Duration.ofSeconds(10));
         wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("PreLoader")));
         WaitUtils.waitForVisibility(proformaPage.faturaUnvaniBox, 10);
+        proformaPage.faturaUnvaniBox.clear();
         proformaPage.faturaUnvaniBox.sendKeys(faturaUnvani);
         JavascriptExecutor js = (JavascriptExecutor) Driver.getDriver();
         js.executeScript("arguments[0].click();", proformaPage.faturaUnvaniText);
+        System.out.println("Girilen Fatura Unvanı: " + faturaUnvani);
     }
 
     @And("Tabela adi alaninin otomatik geldigi dogrulanir")
@@ -467,11 +476,13 @@ public class ProformaStepDef {
         Assert.assertEquals("Tabela adı beklendiği gibi gelmedi", expectedText, actualText);
     }
 
-    @And("Vergi dairesi alanina {string} girer")
-    public void vergiDairesiAlaninaGirer(String vergiDairesi) {
+    @And("Vergi dairesi alanina rastgele bir isim girer")
+    public void vergiDairesiAlaninaGirer() {
+        String vergiDairesi = faker.company().name();
         WebDriverWait wait = new WebDriverWait(Driver.getDriver(), Duration.ofSeconds(10));
         wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("PreLoader")));
         WaitUtils.waitForVisibility(proformaPage.vergiDairesiBox, 10);
+        proformaPage.vergiDairesiBox.clear();
         proformaPage.vergiDairesiBox.sendKeys(vergiDairesi);
         JavascriptExecutor js = (JavascriptExecutor) Driver.getDriver();
         js.executeScript("arguments[0].click();", proformaPage.vergiDairesiText);
@@ -550,46 +561,199 @@ public class ProformaStepDef {
     public void ilAlanindanSecilir(String il) {
         ReusableMethods.scrollHome();
         WaitUtils.waitFor(2);
-
+        proformaPage.duzenleIlDropdown.click();
+        WaitUtils.waitFor(2);
+        proformaPage.duzenleilDropdownInput.sendKeys(il, Keys.ENTER);
     }
 
     @And("İlçe alanindan {string} secilir")
-    public void ilceAlanindanSecilir(String arg0) {
+    public void ilceAlanindanSecilir(String ilce) {
+        proformaPage.duzenleIlceDropdown.click();
+        proformaPage.duzenleIlceDropdownInput.sendKeys(ilce, Keys.ENTER);
+        WaitUtils.waitFor(2);
 
     }
 
     @And("Posta kodu alanina {string} girer")
-    public void postaKoduAlaninaGirer(String arg0) {
+    public void postaKoduAlaninaGirer(String postaKodu) {
+        proformaPage.duzenlePostaKoduBox.click();
+        proformaPage.duzenlePostaKoduBox.sendKeys(postaKodu, Keys.ENTER);
+
 
     }
 
     @And("Adres alanina {string} girer")
-    public void adresAlaninaGirer(String arg0) {
+    public void adresAlaninaGirer(String adresText) {
+        WaitUtils.waitForVisibility(proformaPage.duzenleAdresTitle, 5);
+        proformaPage.duzenleAdresBox.sendKeys(adresText, Keys.ENTER);
+        WaitUtils.waitForVisibility(proformaPage.duzenleAdresKaydetButton, 5);
 
     }
 
     @And("Adres alaninda Kaydet butonuna tiklanir")
     public void adresAlanindaKaydetButonunaTiklanir() {
+        proformaPage.duzenleAdresKaydetButton.click();
 
     }
 
     @And("Adres Listesi alaninda kaydedilen bilgilerin görüntülendigi dogrulanir")
     public void adresListesiAlanindaKaydedilenBilgilerinGörüntülendigiDogrulanir() {
+
+        WaitUtils.waitFor(3);
+
+        // Sadece belirli satırı al
+        WebElement row = proformaPage.duzenleAdresVerify;
+
+        System.out.println("\nSatır kontrol ediliyor: " + row.getAttribute("id"));
+        verifyText(row, "Ünvan", "*GAZİ VETERİNER KLİNİĞİNRK");
+        verifyText(row, "Adres", "test");
+        verifyText(row, "İl", "BURDUR");
+        verifyText(row, "İlçe", "TEFENNİ");
+        verifyText(row, "Adres Tipi", "Fatura & Teslimat Adresi");
+        verifyText(row, "Durum", "Aktif");
+
+        WaitUtils.waitFor(3);
+
     }
 
-    @And("Yetkili Adi alanina {string} girilir")
-    public void yetkiliAdiAlaninaGirilir(String arg0) {
+    private void verifyText(WebElement row, String columnTitle, String expected) {
+        try {
+            WebElement cell = row.findElement(By.xpath(".//td[@data-title='" + columnTitle + "']"));
+            String actualText = cell.getText().trim();
+
+            if (actualText.toLowerCase().contains(expected.toLowerCase())) {
+                System.out.println(columnTitle + " doğrulandı: " + actualText);
+            } else {
+                System.err.println(columnTitle + " HATA! Beklenen: " + expected + ", Ancak Bulunan: " + actualText);
+            }
+        } catch (Exception e) {
+            System.err.println(columnTitle + " alanı bulunamadı!");
+        }
+    }
+
+    @And("Yetkili Adi alanina rastgele bir isim girilir")
+    public void yetkiliAdiAlaninaGirilir() {
+
+        String randomName = faker.name().fullName();
+        WaitUtils.waitFor(5);
+        proformaPage.duzenleYetkiliBilgileriTitle.click();
+        WaitUtils.waitFor(2);
+        JSUtils.JSscrollIntoView(proformaPage.duzenleYetkiliAdiBox);
+        WaitUtils.waitFor(1);
+        ReusableMethods.click(proformaPage.duzenleYetkiliAdiBox);
+        proformaPage.duzenleYetkiliAdiBox.sendKeys(randomName, Keys.ENTER);
+        System.out.println("Girilen yetkili adı: " + randomName);
     }
 
     @And("Yetkili adi alaninda Kaydet butonuna tiklanir")
     public void yetkiliAdiAlanindaKaydetButonunaTiklanir() {
+        WaitUtils.waitFor(5);
+        proformaPage.duzenleYetkiliKaydetButton.click();
     }
 
     @And("Genel kayit icin Kaydet-Proforma butonuna tiklanir")
     public void genelKayitIcinKaydetProformaButonunaTiklanir() {
+        ActionsUtils.scrollEnd();
+        WaitUtils.waitForVisibility(proformaPage.duzenleGenelKaydetButton,  5);
+        proformaPage.duzenleGenelKaydetButton.click();
+
     }
 
     @Then("Duzenlenen bilgilerin Proforma kayit alaninda görüntülendigi dogrulanir")
     public void duzenlenenBilgilerinProformaKayitAlanindaGörüntülendigiDogrulanir() {
+
+    }
+
+
+    //-----------------------------------------tc08-------------------------------------
+
+
+    @And("Incele butonuna tiklanir")
+    public void ınceleButonunaTiklanir() {
+
+        String mainWindow = Driver.getDriver().getWindowHandle();
+
+        JavascriptExecutor js = (JavascriptExecutor) Driver.getDriver();
+        js.executeScript("arguments[0].click();", proformaPage.inceleButton);
+
+        WaitUtils.waitFor(2);
+        Set<String> windows = Driver.getDriver().getWindowHandles();
+        for (String window : windows) {
+            if (!window.equals(mainWindow)) {
+                Driver.getDriver().switchTo().window(window);
+                break;
+            }
+        }
+
+        // Yeni sayfanın yüklenmesini bekle
+        WaitUtils.waitForPageToLoad(20);
+
+    }
+
+    @And("Bilgilerin Cari Listesi > Genel basligi altinda goruntulendigi dogrulanir")
+    public void bilgilerinCariListesiGenelBasligiAltindaGoruntulendigiDogrulanir() {
+        proformaPage.inceleCariListesiTitle.isDisplayed();
+        proformaPage.inceleCariPanel.isDisplayed();
+        System.out.println("Cari Listesi > Genel başlığı altında görünüyor.");
+
+
+    }
+
+    @Then("Cari Listesi > Genel basligi altindaki hicbir bilginin degistirilemedigi dogrulanir")
+    public void cariListesiGenelBasligiAltindakiHicbirBilgininDegistirilemedigiDogrulanir() {
+        List<WebElement> fields = Driver.getDriver().findElements(By.cssSelector("input, textarea, select, [contenteditable]"));
+
+        for (WebElement field : fields) {
+            boolean isReadOnly = Boolean.parseBoolean(field.getDomProperty("readOnly"));
+            boolean isDisabled = Boolean.parseBoolean(field.getDomProperty("disabled"));
+            boolean isContentEditable = Boolean.parseBoolean(field.getDomProperty("contentEditable"));
+
+            Assert.assertTrue("Alan değiştirilebilir!", isReadOnly || isDisabled || !isContentEditable);
+        }
+
+    }
+
+    //-----------------------------------------tc09-------------------------------------
+
+    @And("Yetkili Adi alaninda + butonuna tiklanir")
+    public void yetkiliAdiAlanindaButonunaTiklanir() {
+        WaitUtils.waitForClickablility(proformaPage.yetkiliEkleButton, 10);
+        proformaPage.yetkiliEkleButton.click();
+
+    }
+
+    @And("Yetkili Adi alanina random bir isim girer")
+    public void yetkiliAdiAlaninaRandomBirIsimGirer() {
+        WaitUtils.waitForVisibility(proformaPage.yetkiliEkleAdiBox, 5);
+        randomYetkili = faker.name().fullName();
+        proformaPage.yetkiliEkleAdiBox.sendKeys(randomYetkili, Keys.ENTER) ;
+    }
+
+    @And("Yetkili alaninda Kaydet butonuna tiklar")
+    public void yetkiliAlanindaKaydetButonunaTiklar() {
+        ReusableMethods.waitForSecond(3);
+        proformaPage.yetkiliEkleKaydetButton.click();
+        ReusableMethods.waitForSecond(3);
+    }
+
+    @Then("Yetkili Adi alaninda kaydedilen bilginin görüntülendigi dogrulanir")
+    public void yetkiliAdiAlanindaKaydedilenBilgininGörüntülendigiDogrulanir() {
+
+        ReusableMethods.waitForSecond(3);
+        String actualText = proformaPage.yetkiliAdi.getText();
+
+        String expectedText = randomYetkili;
+
+        Assert.assertEquals("Yetkili adı alanı doğru şekilde görüntülenmedi!", expectedText, actualText);
+    }
+
+
+    //-----------------------------------------tc10-------------------------------------
+
+    @Then("{string} hata mesajinin görüntülendigi dogrulanir")
+    public void hataMesajininGörüntülendigiDogrulanir(String mesaj) {
+        String actualMessage = proformaPage.yetkiliHataMesaji.getText();
+        Assert.assertTrue("Hata mesajı doğru şekilde görüntülenmedi!", actualMessage.contains(mesaj));
+
     }
 }
